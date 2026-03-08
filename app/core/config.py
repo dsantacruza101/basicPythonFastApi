@@ -4,11 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     secret_key: str
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 15
-    timezone: str = "America/El_Salvador"
-    mongo_uri: str = "mongodb://localhost:27017"
-    mongo_db_name: str = "local"
+    algorithm: str
+    access_token_expire_minutes: int
+    timezone: str
+    mongo_uri: str
+    mongo_db_name: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
