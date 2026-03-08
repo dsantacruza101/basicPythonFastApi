@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from app.db.client import db_client
+from app.db.client import db
 from app.models.user import User
 from app.schemas.user import user_schema, users_schema
 from bson import ObjectId
@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/", response_model=list[User])
 async def getUsers():
-    return users_schema(db_client.local.users.find())
+    return users_schema(db.users.find())
 
 @router.get("/{id}", response_model=User)
 async def user(id: str):
@@ -39,9 +39,9 @@ async def create_user(user: User):
     user_dict = dict(user)
     del user_dict["id"]
     
-    id = db_client.local.users.insert_one(user_dict).inserted_id
+    id = db.users.insert_one(user_dict).inserted_id
     
-    new_user = user_schema(db_client.local.users.find_one({"_id": id}))
+    new_user = user_schema(db.users.find_one({"_id": id}))
 
     return User(**new_user)
 
@@ -60,7 +60,7 @@ async def update_user(user: User):
 
     del user_dict["id"]
     
-    db_client.local.users.update_one({"_id": ObjectId(user.id)}, {"$set": user_dict})
+    db.users.update_one({"_id": ObjectId(user.id)}, {"$set": user_dict})
 
     return user
 
@@ -81,11 +81,11 @@ async def delete_user(id: str):
             detail="User not found"
         )
     
-    db_client.local.users.delete_one({"_id": object_id})
+    db.users.delete_one({"_id": object_id})
     return {"success": "User deleted successfully"}
 
 def search_users(key: str, value: str, raise_error: bool = True):
-    user = db_client.local.users.find_one({key: value})
+    user = db.users.find_one({key: value})
 
     if not user:
         if raise_error:

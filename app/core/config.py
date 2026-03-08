@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 15
     timezone: str = "America/El_Salvador"
+    mongo_uri: str = "mongodb://localhost:27017"
+    mongo_db_name: str = "local"
 
     model_config = SettingsConfigDict(
         env_file=".env",
